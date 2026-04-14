@@ -32,6 +32,6 @@ services:
 
 databases:
   - name: i-card-print-db
-    plan: starter
+    plan: free
     databaseName: icardprint
     user: icarduser
