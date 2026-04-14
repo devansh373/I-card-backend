@@ -1,0 +1,177 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model School {
+  id         Int     @id @default(autoincrement())
+  name       String
+  code       String  @unique
+  adminEmail String?
+  logoUrl    String?
+
+  // Optional school profile fields
+  description           String?
+  address               String?
+  contactNumber         String?
+  affiliationNumber     String?
+  registrationNumber    String?
+  registrationDetails   String?
+  authoritySignatureUrl String?
+  principalSignatureUrl String?
+  templateFrontUrl      String?
+  templateBackUrl       String?
+
+  // 🔐 ImageKit (per school)
+  imagekitPublicKey   String?
+  imagekitPrivateKey  String?
+  imagekitUrlEndpoint String?
+  imagekitFolder      String?
+
+  classes  Class[]
+  students Student[]
+  users    User[]
+
+  createdAt DateTime @default(now())
+}
+
+model Class {
+  id       Int    @id @default(autoincrement())
+  name     String
+  schoolId Int
+  school   School @relation(fields: [schoolId], references: [id])
+
+  sections Section[]
+  students Student[]
+}
+
+model Section {
+  id      Int    @id @default(autoincrement())
+  name    String
+  classId Int
+  class   Class  @relation(fields: [classId], references: [id])
+
+  students Student[]
+}
+
+enum PhotoStatus {
+  NOT_UPLOADED
+  UPLOADED
+  APPROVED
+}
+
+enum PrintStatus {
+  PENDING
+  READY
+  PRINTED
+  DELIVERED
+}
+
+model Student {
+  id          Int     @id @default(autoincrement())
+  aparIdOrPan String  @unique
+  rollNo      String?
+
+  name        String
+  dateOfBirth DateTime?
+
+  currentAddress   String?
+  guardianMobileNo String?
+
+  gender     String?
+  religion   String?
+  bloodGroup String?
+
+  schoolId  Int
+  classId   Int
+  sectionId Int
+
+  school  School  @relation(fields: [schoolId], references: [id])
+  class   Class   @relation(fields: [classId], references: [id])
+  section Section @relation(fields: [sectionId], references: [id])
+
+  photoUrl    String?
+  photoStatus PhotoStatus @default(NOT_UPLOADED)
+
+  printStatus PrintStatus @default(PENDING)
+  idCard      IdCard?
+}
+
+enum IdCardStatus {
+  PENDING
+  READY
+}
+
+model IdCard {
+  id        Int          @id @default(autoincrement())
+  studentId Int          @unique
+  frontUrl  String?
+  backUrl   String?
+  status    IdCardStatus @default(PENDING)
+
+  student Student @relation(fields: [studentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  SCHOOL_ADMIN
+  VENDOR
+  TEACHER
+}
+
+enum VendorStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  role         UserRole
+
+  // School relation (only for school users)
+  schoolId Int?
+  school   School? @relation(fields: [schoolId], references: [id])
+
+  // Vendor-specific fields
+  vendorName   String?
+  phoneNumber  String?
+  location     String?
+  vendorStatus VendorStatus?
+
+  // Schools assigned to vendor (array of school IDs)
+  schoolIds Int[] @default([])
+
+  mustChangePassword Boolean @default(true)
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+}
+
+// model User {
+//   id           Int      @id @default(autoincrement())
+//   email        String   @unique
+//   passwordHash String
+//   role         UserRole
+
+//   schoolId Int?
+//   school   School? @relation(fields: [schoolId], references: [id])
+//   isActive Boolean @default(true)
+
+//   createdAt DateTime @default(now())
+// }

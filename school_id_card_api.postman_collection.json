@@ -1,0 +1,612 @@
+{
+	"info": {
+		"_postman_id": "b3e8e123-4567-4890-bcde-f1234567890a",
+		"name": "School ID Card Printing System API",
+		"description": "API collection for testing the School ID Card Printing System. Includes Auth, Schools, Classes, Students, Vendors, and ID Card operations.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticate user and receive JWT in HTTP-only cookie."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"currentPassword\": \"oldPassword123\",\n    \"newPassword\": \"newPassword123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/change-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Schools",
+			"item": [
+				{
+					"name": "Get All Schools",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/schools?limit=10&page=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"schools"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register School with Admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"ABC School\",\n    \"code\": \"ABC001\",\n    \"adminEmail\": \"admin@abcschool.com\",\n    \"imagekitPublicKey\": \"public_...\",\n    \"imagekitPrivateKey\": \"private_...\",\n    \"imagekitUrlEndpoint\": \"https://ik.imagekit.io/...\",\n    \"imagekitFolder\": \"folder_name\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/schools/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"schools",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "School Setup (Logo / Template)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "logo",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "template",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "description",
+									"value": "School description",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "123 Street, City",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/schools/setup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"schools",
+								"setup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Signatures",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "principal",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "authority",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/schools/:schoolId/signatures",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"schools",
+								":schoolId",
+								"signatures"
+							],
+							"variable": [
+								{
+									"key": "schoolId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Students",
+			"item": [
+				{
+					"name": "Get Students",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/students?class=10A&section=A&printStatus=READY&search=Raj",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"students"
+							],
+							"query": [
+								{
+									"key": "class",
+									"value": "10A"
+								},
+								{
+									"key": "section",
+									"value": "A"
+								},
+								{
+									"key": "printStatus",
+									"value": "READY"
+								},
+								{
+									"key": "search",
+									"value": "Raj"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Student",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"enrollmentNumber\": \"STU001\",\n    \"firstName\": \"Raj\",\n    \"lastName\": \"Kumar\",\n    \"classId\": 1,\n    \"sectionId\": 1,\n    \"fatherName\": \"Mr. Kumar\",\n    \"mobileNo\": \"+919876543210\",\n    \"bloodGroup\": \"O+\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/students",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Student Photo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "photo",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/students/:id/photo",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"students",
+								":id",
+								"photo"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bulk Import Students",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/students/import",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"students",
+								"import"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ID Cards",
+			"item": [
+				{
+					"name": "Single Generate",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/students/:studentId/id-card/single-generate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"students",
+								":studentId",
+								"id-card",
+								"single-generate"
+							],
+							"variable": [
+								{
+									"key": "studentId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bulk Generate",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"studentIds\": [1, 2, 3, 4, 5]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/id-cards/bulk-generate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"id-cards",
+								"bulk-generate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Print (PDF)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"studentIds\": [1, 2, 3]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/id-cards/print?side=FRONT&paper=A4",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"id-cards",
+								"print"
+							],
+							"query": [
+								{
+									"key": "side",
+									"value": "FRONT"
+								},
+								{
+									"key": "paper",
+									"value": "A4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Previews",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/id-cards/previews?schoolId=1&classId=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"id-cards",
+								"previews"
+							],
+							"query": [
+								{
+									"key": "schoolId",
+									"value": "1"
+								},
+								{
+									"key": "classId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vendors",
+			"item": [
+				{
+					"name": "Register Vendor",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vendorName\": \"ABC Printing\",\n    \"email\": \"vendor@abc.com\",\n    \"phoneNumber\": \"+919876543210\",\n    \"location\": \"NY\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vendors/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vendors",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assign School to Vendor",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"schoolId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vendors/:vendorId/schools",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vendors",
+								":vendorId",
+								"schools"
+							],
+							"variable": [
+								{
+									"key": "vendorId",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		}
+	]
+}
