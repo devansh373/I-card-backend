@@ -35,7 +35,7 @@
 import type {Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { prisma } from "../db.js";
-import type { User } from "../generated/prisma/client.js";
+import type { User } from "@prisma/client";
 
 
 const JWT_SECRET = process.env.JWT_SECRET!;

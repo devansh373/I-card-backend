@@ -2,16 +2,12 @@ import type { Request, Response } from "express";
 import { prisma } from "../db.js";
 import type { AuthRequest } from "../middlewares/authenticate.middleware.js";
 import bcrypt from "bcrypt";
-import { createRequire } from "module";
-
-import { generateTempPassword } from "../utils/password.js";
-import { sendSchoolAdminCredentials } from "../utils/mailer.js";
-import type { Prisma, School } from "../generated/prisma/client.js";
+import { UserRole, type Prisma, type School } from "@prisma/client";
 import { imagekit } from "../config/imagekit.js";
 import ImageKit from "imagekit";
 
-const require = createRequire(import.meta.url);
-const { UserRole } = require("../generated/prisma/index.js");
+import { generateTempPassword } from "../utils/password.js";
+import { sendSchoolAdminCredentials } from "../utils/mailer.js";
 /**
  * Get all schools with optional filters
  */

@@ -1,14 +1,10 @@
 import type { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { createRequire } from "module";
+import { UserRole, VendorStatus } from "@prisma/client";
 import { prisma } from "../db.js";
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/auth.js";
 import type { AuthRequest } from "../middlewares/authenticate.middleware.js";
-
-// Prisma enums are in CJS files - use createRequire to safely import them in ESM context
-const require = createRequire(import.meta.url);
-const { UserRole, VendorStatus } = require("../generated/prisma/index.js");
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;

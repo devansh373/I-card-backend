@@ -3,7 +3,6 @@ node_modules
 .env
 .env.production
 
-# /src/generated/prisma
 
 # lock files
 # package-lock.json

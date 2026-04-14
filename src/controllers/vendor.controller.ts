@@ -1,14 +1,10 @@
 import type { Response } from "express";
 import type { AuthRequest } from "../middlewares/authenticate.middleware.js";
 import bcrypt from "bcrypt";
-import { createRequire } from "module";
+import { UserRole, VendorStatus } from "@prisma/client";
 import { prisma } from "../db.js";
 import { generateTempPassword } from "../utils/password.js";
 import { sendSchoolAdminCredentials } from "../utils/mailer.js";
-
-// Prisma enums are in CJS files - use createRequire to safely import them in ESM context
-const require = createRequire(import.meta.url);
-const { UserRole, VendorStatus } = require("../generated/prisma/index.js");
 
 export const registerVendor = async (req: AuthRequest, res: Response) => {
   const { vendorName, email, phoneNumber, location } = req.body as {

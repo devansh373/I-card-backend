@@ -1,5 +1,5 @@
 import { prisma } from "../db.js";
-import type { User } from "../generated/prisma/client.js";
+import type { User } from "@prisma/client";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
 

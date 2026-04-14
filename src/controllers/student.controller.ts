@@ -1,13 +1,9 @@
 import type { Response } from "express";
 import type { AuthRequest } from "../middlewares/authenticate.middleware.js";
-import { createRequire } from "module";
+import { PrintStatus } from "@prisma/client";
 import { prisma } from "../db.js";
 import ImageKit from "imagekit";
 import { getOrCreateIdCardPreview } from "../services/idCard.service.js";
-
-// Prisma enums are in CJS files - use createRequire to safely import them in ESM context
-const require = createRequire(import.meta.url);
-const { PrintStatus } = require("../generated/prisma/index.js");
 
 // import { imagekit } from "../config/imagekit.js";
 
