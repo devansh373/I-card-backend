@@ -16,19 +16,19 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: ADMIN_EMAIL
-        placeholder: "Admin email for initial setup"
+        sync: false
       - key: ADMIN_PASSWORD
-        placeholder: "Strong admin password for initial setup"
+        sync: false
       - key: ALLOWED_ORIGINS
         value: "*" # Update this to your frontend URL in production
       - key: IMAGEKIT_PUBLIC_KEY
-        placeholder: "Optional: Your ImageKit public key"
+        sync: false
       - key: IMAGEKIT_PRIVATE_KEY
-        placeholder: "Optional: Your ImageKit private key"
+        sync: false
       - key: IMAGEKIT_URL_ENDPOINT
-        placeholder: "Optional: Your ImageKit URL endpoint"
+        sync: false
       - key: RESEND_API_KEY
-        placeholder: "Optional: Your Resend API key for emails"
+        sync: false
 
 databases:
   - name: i-card-print-db
