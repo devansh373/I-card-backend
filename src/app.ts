@@ -43,7 +43,7 @@ app.use(
 // Security: CORS configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",")
-  : ["http://localhost:3000", "http://localhost:5173"]; // Default for development
+  : ["http://localhost:3000", "http://localhost:5173", "https://id-card-frontend.onrender.com"]; // Default for development and initial production setup
 
 app.use(
   cors({
