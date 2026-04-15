@@ -39,10 +39,9 @@ export const login = async (req: Request, res: Response) => {
 
   res.cookie("access_token", token, {
     httpOnly: true, // ✅ prevents JS access
-    secure: process.env.NODE_ENV !== "development", // ✅ true in production (HTTPS)
-    sameSite: "strict", // ✅ CSRF protection
+    secure: true, // ✅ MUST be true for sameSite: "none"
+    sameSite: "none", // ✅ REQUIRED for cross-site cookies on Render subdomains
     maxAge: 24 * 60 * 60 * 1000, // 1 day
-
   });
   return res.json({
     message: "Login successful",
@@ -56,7 +55,11 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const logout = (_req: Request, res: Response) => {
-  res.clearCookie("access_token");
+  res.clearCookie("access_token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
   return res.json({ message: "Logged out successfully" });
 };
 
