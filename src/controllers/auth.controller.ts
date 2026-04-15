@@ -42,7 +42,8 @@ export const login = async (req: Request, res: Response) => {
     secure: true, // ✅ MUST be true for sameSite: "none"
     sameSite: "none", // ✅ REQUIRED for cross-site cookies on Render subdomains
     maxAge: 24 * 60 * 60 * 1000, // 1 day
-  });
+    partitioned: true, // ✅ CHIPS support for modern browsers
+  } as any);
   return res.json({
     message: "Login successful",
     user: {
@@ -59,7 +60,8 @@ export const logout = (_req: Request, res: Response) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-  });
+    partitioned: true,
+  } as any);
   return res.json({ message: "Logged out successfully" });
 };
 
