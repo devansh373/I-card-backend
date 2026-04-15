@@ -21,6 +21,9 @@ import { prisma } from "./db.js";
 
 const app = express();
 
+// Trust proxy for secure cookies on Render/behind proxies
+app.set("trust proxy", 1);
+
 // Security: Helmet - Set security headers
 app.use(
   helmet({
