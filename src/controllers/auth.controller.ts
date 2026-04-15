@@ -234,6 +234,89 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
 };
 
 /**
+ * Admin (SUPER_ADMIN) create new user
+ */
+export const adminCreateUser = async (req: AuthRequest, res: Response) => {
+  const actor = req.user;
+  if (!actor) return res.status(401).json({ message: "Unauthorized" });
+
+  // Safeguard check for SUPER_ADMIN role
+  if (actor.role !== UserRole.SUPER_ADMIN) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+
+  const {
+    email,
+    password,
+    role,
+    schoolId,
+    vendorName,
+    phoneNumber,
+    location,
+    vendorStatus,
+    schoolIds,
+    isActive = true,
+    mustChangePassword = true,
+  } = req.body as Record<string, any>;
+
+  if (!email || !password || !role) {
+    return res.status(400).json({ message: "Email, password and role are required" });
+  }
+
+  // Validate role
+  if (!Object.values(UserRole).includes(role as any)) {
+    return res.status(400).json({ message: `Invalid role: ${role}` });
+  }
+
+  // Check if user already exists
+  const existingUser = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (existingUser) {
+    return res.status(409).json({ message: "User with this email already exists" });
+  }
+
+  // Hash password
+  const passwordHash = await bcrypt.hash(password, 10);
+
+  try {
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        passwordHash,
+        role: role as UserRole,
+        schoolId: schoolId ? Number(schoolId) : null,
+        vendorName,
+        phoneNumber,
+        location,
+        vendorStatus: vendorStatus as VendorStatus || null,
+        schoolIds: Array.isArray(schoolIds) ? schoolIds.map(Number) : [],
+        isActive,
+        mustChangePassword,
+      },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        schoolId: true,
+        vendorName: true,
+        phoneNumber: true,
+        location: true,
+        vendorStatus: true,
+        isActive: true,
+        createdAt: true,
+      },
+    });
+
+    return res.status(201).json({ message: "User created successfully", user: newUser });
+  } catch (error) {
+    console.error("Create user error:", error);
+    return res.status(500).json({ message: "Failed to create user" });
+  }
+};
+
+/**
  * Admin (SUPER_ADMIN) update user by id
  */
 export const adminUpdateUser = async (req: AuthRequest, res: Response) => {
