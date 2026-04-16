@@ -5,6 +5,8 @@ import { UserRole, VendorStatus } from "@prisma/client";
 import { prisma } from "../db.js";
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/auth.js";
 import type { AuthRequest } from "../middlewares/authenticate.middleware.js";
+import { generateTempPassword } from "../utils/password.js";
+import { sendOnboardingEmail } from "../utils/mailer.js";
 
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -259,9 +261,12 @@ export const adminCreateUser = async (req: AuthRequest, res: Response) => {
     mustChangePassword = true,
   } = req.body as Record<string, any>;
 
-  if (!email || !password || !role) {
-    return res.status(400).json({ message: "Email, password and role are required" });
+  if (!email || !role) {
+    return res.status(400).json({ message: "Email and role are required" });
   }
+
+  // Use provided password or generate a random one
+  const tempPassword = password || generateTempPassword(10);
 
   // Validate role
   if (!Object.values(UserRole).includes(role as any)) {
@@ -278,9 +283,10 @@ export const adminCreateUser = async (req: AuthRequest, res: Response) => {
   }
 
   // Hash password
-  const passwordHash = await bcrypt.hash(password, 10);
+  const passwordHash = await bcrypt.hash(tempPassword, 10);
 
   try {
+    // 1. Create User
     const newUser = await prisma.user.create({
       data: {
         email,
@@ -306,10 +312,26 @@ export const adminCreateUser = async (req: AuthRequest, res: Response) => {
         vendorStatus: true,
         isActive: true,
         createdAt: true,
+        school: {
+          select: { code: true }
+        }
       },
     });
 
-    return res.status(201).json({ message: "User created successfully", user: newUser });
+    // 2. 📧 Send Onboarding Email
+    sendOnboardingEmail({
+      to: email,
+      role: role as string,
+      password: tempPassword,
+      schoolCode: (newUser as any).school?.code,
+      vendorName: vendorName,
+    }).catch(err => console.error("Onboarding email failed:", err));
+
+    return res.status(201).json({ 
+      message: "User created and onboarding email sent", 
+      user: newUser,
+      tempPassword // Return as fallback
+    });
   } catch (error) {
     console.error("Create user error:", error);
     return res.status(500).json({ message: "Failed to create user" });

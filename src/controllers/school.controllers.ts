@@ -7,7 +7,7 @@ import { imagekit } from "../config/imagekit.js";
 import ImageKit from "imagekit";
 
 import { generateTempPassword } from "../utils/password.js";
-import { sendSchoolAdminCredentials } from "../utils/mailer.js";
+import { sendOnboardingEmail } from "../utils/mailer.js";
 /**
  * Get all schools with optional filters
  */
@@ -300,8 +300,9 @@ export const registerSchoolWithAdmin = async (
     );
 
     // 📧 Email AFTER transaction
-    sendSchoolAdminCredentials({
+    sendOnboardingEmail({
       to: adminEmail,
+      role: "SCHOOL_ADMIN",
       schoolCode: code,
       password: tempPassword,
     }).catch(console.error);
