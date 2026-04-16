@@ -23,25 +23,25 @@ const router = Router();
 router.get(
   "/students/:studentId/id-card/single-generate",
   authenticate,
-  authorizeRoles("SUPER_ADMIN", "SCHOOL_ADMIN", "VENDOR"),
+  authorizeRoles("SUPER_ADMIN", "SCHOOL_ADMIN", "VENDOR", "TEACHER"),
   previewIdCard
 );
 router.post(
   "/id-cards/bulk-generate",
   authenticate,
-  authorizeRoles("SUPER_ADMIN", "SCHOOL_ADMIN", "VENDOR"),
+  authorizeRoles("SUPER_ADMIN", "SCHOOL_ADMIN", "VENDOR", "TEACHER"),
   bulkGenerateIdCards
 );
 router.post(
   "/id-cards/print",
   authenticate,
-  authorizeRoles("SUPER_ADMIN", "SCHOOL_ADMIN", "VENDOR"),
+  authorizeRoles("SUPER_ADMIN", "SCHOOL_ADMIN", "VENDOR", "TEACHER"),
   printIdCards
 );
 router.get(
   "/id-cards/previews",
   authenticate,
-  authorizeRoles("SUPER_ADMIN", "SCHOOL_ADMIN", "VENDOR"),
+  authorizeRoles("SUPER_ADMIN", "SCHOOL_ADMIN", "VENDOR", "TEACHER"),
   getIdCardPreviews
 );
 

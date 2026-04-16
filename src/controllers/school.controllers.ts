@@ -276,6 +276,7 @@ export const registerSchoolWithAdmin = async (
           data: {
             name,
             code,
+            adminEmail,
             imagekitPublicKey,
             imagekitPrivateKey, // 🔐 stored, never exposed
             imagekitUrlEndpoint,
