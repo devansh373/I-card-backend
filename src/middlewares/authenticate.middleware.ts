@@ -60,6 +60,27 @@ export const authenticate = async (
       userId: number;
     };
 
+    // --- GUEST LOGIN INTERCEPT ---
+    if (payload.userId === -1) {
+      req.user = {
+        id: -1,
+        email: process.env.GUEST_EMAIL || "demo@example.com",
+        passwordHash: "",
+        role: (process.env.GUEST_ROLE as any) || "SUPER_ADMIN",
+        schoolId: null,
+        vendorName: "Demo Vendor",
+        phoneNumber: null,
+        location: null,
+        vendorStatus: "ACTIVE",
+        schoolIds: [],
+        mustChangePassword: false,
+        isActive: true,
+        createdAt: new Date(),
+      };
+      return next();
+    }
+    // --- END GUEST LOGIN INTERCEPT ---
+
     // 🔑 ALWAYS fetch fresh user from DB
     const user = await prisma.user.findUnique({
       where: { id: payload.userId },

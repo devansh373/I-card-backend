@@ -15,6 +15,46 @@ export const login = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Email and password required" });
   }
 
+  // --- GUEST LOGIN INTERCEPT ---
+  const GUEST_EMAIL = process.env.GUEST_EMAIL;
+  const GUEST_PASSWORD = process.env.GUEST_PASSWORD;
+  const GUEST_ROLE = (process.env.GUEST_ROLE as UserRole) || UserRole.SUPER_ADMIN;
+
+  if (
+    GUEST_EMAIL &&
+    GUEST_PASSWORD &&
+    email === GUEST_EMAIL &&
+    password === GUEST_PASSWORD
+  ) {
+    const token = jwt.sign(
+      {
+        userId: -1, // Special ID to bypass DB
+        role: GUEST_ROLE,
+        schoolId: null,
+      },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
+    res.cookie("access_token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000,
+      partitioned: true,
+    } as any);
+
+    return res.json({
+      message: "Guest login successful",
+      user: {
+        id: -1,
+        role: GUEST_ROLE,
+        mustChangePassword: false,
+      },
+    });
+  }
+  // --- END GUEST LOGIN INTERCEPT ---
+
   const user = await prisma.user.findUnique({
     where: { email },
   });
